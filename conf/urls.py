@@ -15,15 +15,19 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
+from vacancies.views import custom_handler404, custom_handler500
+from vacancies.views import MainView, VacanciesView, SpecializationByVacanciesView, CompanyCardView, VacancyView
 
-from vacancies.views import MainView, VacanciesView, SpecializationByVacanciesView, company_card_view, vacancy_view
+handler404 = custom_handler404
+handler500 = custom_handler500
+
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', MainView.as_view()),
     path('vacancies/', VacanciesView.as_view()),
     path('vacancies/cat/<str:specialization>/', SpecializationByVacanciesView.as_view()),
-    path('companies/345', company_card_view.as_view()),
-    path('vacancies/22', vacancy_view.as_view()),
+    path('companies/<int:company_id>', CompanyCardView.as_view()),
+    path('vacancies/<int:vacancy_id>', VacancyView.as_view()),
 
 ]

@@ -1,4 +1,4 @@
-from django.http import HttpResponse
+from django.http import HttpResponseServerError, Http404
 from django.shortcuts import render
 from django.views import View
 from vacancies.models import Vacancy, Specialty, Company
@@ -12,8 +12,8 @@ class MainView(View):
                 'speciality_backend': Specialty.objects.filter(code="backend"),
                 'speciality_backend_count': Specialty.objects.filter(code="backend").count(),
                 'companies': Company.objects.all(),
-                'vacancies_count': Company.objects.annotate(count_vacancy=Count('vacancies'))
-            }
+                'vacancies_count': Company.objects.annotate(count_vacancy=Count('vacancies')),
+            },
         )
 
 
@@ -22,26 +22,53 @@ class VacanciesView(View):
         return render(request, 'pages/vacancies.html', context={
                 'vacancies': Vacancy.objects.all(),
                 'vacancies_count': Vacancy.objects.all().count(),
-            }
+            },
         )
 
 
 class SpecializationByVacanciesView(View):
     def get(self, request, specialization):
-        specialization = Specialty.objects.get(code=specialization)
+        try:
+            specialization = Specialty.objects.get(code=specialization)
+        except KeyError:
+            raise HttpResponseServerError
         return render(request, 'pages/vacancies_by_specialization.html', context={
-                'vacancies': Vacancy.objects.filter(specialty__code=specialization),
-                'vacancies_count': Vacancy.objects.filter(specialty__code=specialization).count(),
+                'vacancies': Vacancy.objects.filter(specialty__code=specialization.code),
+                'vacancies_count': Vacancy.objects.filter(specialty__code=specialization.code).count(),
                 'specialization': specialization,
-            }
+            },
         )
 
 
-class company_card_view(View):
-    def get(self, request):
-        return render(request, 'pages/company.html')
+class CompanyCardView(View):
+    def get(self, request, company_id):
+        try:
+            company = Company.objects.get(id=company_id)
+        except KeyError:
+            raise HttpResponseServerError
+        return render(request, 'pages/company.html', context={
+                'company': Company.objects.get(id=company.id),
+                'vacancies_count': Vacancy.objects.filter(company__id=company.id).count(),
+                'vacancies': Vacancy.objects.filter(company__id=company.id),
+            },
+        )
 
 
-class vacancy_view(View):
-    def get(self, request):
-        return render(request, 'pages/vacancy.html')
+class VacancyView(View):
+    def get(self, request, vacancy_id):
+        try:
+            vacancy = Company.objects.get(id=vacancy_id)
+        except KeyError:
+            raise HttpResponseServerError
+        return render(request, 'pages/vacancy.html', context={
+                'vacancy': Vacancy.objects.get(id=vacancy.id),
+            },
+        )
+
+
+def custom_handler404(request, exception):
+    return Http404('Ой, что то сломалось... Простите извините!(404)')
+
+
+def custom_handler500(request):
+    return HttpResponseServerError('Ошибка сервера!')

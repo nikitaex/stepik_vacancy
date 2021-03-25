@@ -4,8 +4,8 @@ import django
 os.environ["DJANGO_SETTINGS_MODULE"] = 'conf.settings'
 django.setup()
 
-from data import jobs, companies, specialties
-from vacancies.models import Vacancy, Specialty, Company
+from data import jobs, companies, specialties  # noqa: E402
+from vacancies.models import Vacancy, Specialty, Company  # noqa: E402
 
 
 if __name__ == '__main__':
@@ -15,13 +15,13 @@ if __name__ == '__main__':
             name=company["title"],
             location=company["location"],
             description=company["description"],
-            employee_count=company["employee_count"]
+            employee_count=company["employee_count"],
         )
 
     for specialty in specialties:
         Specialty.objects.create(
             code=specialty["code"],
-            title=specialty["title"]
+            title=specialty["title"],
         )
 
     for job in jobs:
@@ -33,5 +33,5 @@ if __name__ == '__main__':
             description=job["description"],
             salary_min=job["salary_from"],
             salary_max=job["salary_to"],
-            published_at=job["posted"]
+            published_at=job["posted"],
         )
