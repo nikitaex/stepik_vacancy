@@ -31,7 +31,7 @@ class SpecializationByVacanciesView(View):
         try:
             specialization = Specialty.objects.get(code=specialization)
         except KeyError:
-            raise HttpResponseServerError
+            raise Http404
         return render(request, 'pages/vacancies_by_specialization.html', context={
                 'vacancies': Vacancy.objects.filter(specialty__code=specialization.code),
                 'vacancies_count': Vacancy.objects.filter(specialty__code=specialization.code).count(),
@@ -45,7 +45,7 @@ class CompanyCardView(View):
         try:
             company = Company.objects.get(id=company_id)
         except KeyError:
-            raise HttpResponseServerError
+            raise Http404
         return render(request, 'pages/company.html', context={
                 'company': Company.objects.get(id=company.id),
                 'vacancies_count': Vacancy.objects.filter(company__id=company.id).count(),
@@ -59,7 +59,7 @@ class VacancyView(View):
         try:
             vacancy = Company.objects.get(id=vacancy_id)
         except KeyError:
-            raise HttpResponseServerError
+            raise Http404
         return render(request, 'pages/vacancy.html', context={
                 'vacancy': Vacancy.objects.get(id=vacancy.id),
             },
