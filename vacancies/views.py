@@ -9,8 +9,8 @@ class MainView(View):
     def get(self, request):
         return render(
             request, 'pages/index.html', context={
-                'speciality_backend': Specialty.objects.filter(code="backend"),
-                'speciality_backend_count': Specialty.objects.filter(code="backend").count(),
+                'speciality_all': Specialty.objects.all(),
+                'speciality_count': Specialty.objects.annotate(count=Count('vacancies')),
                 'companies': Company.objects.all(),
                 'vacancies_count': Company.objects.annotate(count_vacancy=Count('vacancies')),
             },
