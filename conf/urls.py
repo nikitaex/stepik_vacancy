@@ -15,8 +15,10 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from vacancies.views import custom_handler404, custom_handler500
-from vacancies.views import MainView, VacanciesView, SpecializationByVacanciesView, CompanyCardView, VacancyView
+from vacancies.views import custom_handler404, custom_handler500, SendVacancyView, MyCompanyCreateOfferView, \
+    MyCompanyCreateView, MyCompanyEditView, MyVacanciesList, MyVacancyEditView, MyVacancyCreateView, MyLogoutView
+from vacancies.views import MainView, VacanciesView, SpecializationByVacanciesView, CompanyCardView, VacancyView, \
+    MySignupView, MyLoginView
 
 handler404 = custom_handler404
 handler500 = custom_handler500
@@ -29,5 +31,14 @@ urlpatterns = [
     path('vacancies/cat/<str:specialization>/', SpecializationByVacanciesView.as_view()),
     path('companies/<int:company_id>', CompanyCardView.as_view()),
     path('vacancies/<int:vacancy_id>', VacancyView.as_view()),
-
+    path('login/', MyLoginView.as_view(), name="login"),
+    path('logout/', MyLogoutView.as_view()),
+    path('register/', MySignupView.as_view(), name="register"),
+    path('vacancies/<int:vacancy_id>/send', SendVacancyView.as_view(), name="send"),
+    path('mycompany/letsstart', MyCompanyCreateOfferView.as_view(), name="company_create_offer"),
+    path('mycompany/create', MyCompanyCreateView.as_view(), name="company_create"),
+    path('mycompany/', MyCompanyEditView.as_view(), name="company_edit"),
+    path('mycompany/vacancies', MyVacanciesList.as_view(), name="vacancies_list"),
+    path('mycompany/vacancies/create/', MyVacancyCreateView.as_view(), name="vacancy_create"),
+    path('mycompany/vacancies/<int:pk>', MyVacancyEditView.as_view(), name="vacancy_edit"),
 ]

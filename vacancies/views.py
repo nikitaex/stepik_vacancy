@@ -1,8 +1,81 @@
+from django.contrib.auth.models import User
+from django.contrib.auth.views import LoginView, LogoutView
 from django.http import HttpResponseServerError, Http404
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
+from django.urls import reverse
 from django.views import View
+
+from vacancies.forms import CompanyForm, VacancyForm
 from vacancies.models import Vacancy, Specialty, Company
 from django.db.models import Count
+from django.contrib.auth.forms import UserCreationForm
+from django.views.generic import CreateView, UpdateView, ListView
+
+
+class MySignupView(CreateView):
+    form_class = UserCreationForm
+    success_url = 'login'
+    template_name = 'pages/register.html'
+
+
+class MyLoginView(LoginView):
+    template_name = 'pages/login.html'
+
+
+class MyLogoutView(LogoutView):
+    pass
+
+
+class BaseCompanyView:
+    model = Company
+    form_class = CompanyForm
+
+
+class BaseVacancyView:
+    model = Vacancy
+    form_class = VacancyForm
+
+
+class SendVacancyView(View):
+    def get(self, request, vacancy_id):
+        vacancy = Vacancy.objects.get(id=vacancy_id)
+        return render(request, 'pages/send.html', context={
+            'vacancy': Vacancy.objects.get(id=vacancy.id)})
+
+
+class MyCompanyCreateOfferView(View):
+    def get(self, request):
+        return render(request, 'pages/company-create.html')
+
+
+class MyCompanyCreateView(BaseCompanyView, CreateView):
+    template_name = 'pages/company-edit.html'
+
+
+class MyCompanyEditView(BaseCompanyView, UpdateView):
+    template_name = 'pages/company-edit.html'
+
+    def get_object(self, queryset=None):
+        return get_object_or_404(User, id=self.request.user.id)
+
+
+class MyVacanciesList(BaseVacancyView, ListView):
+    context_object_name = 'vacancies'
+    template_name = 'pages/vacancy-list.html'
+
+
+class MyVacancyCreateView(BaseVacancyView, CreateView):
+    template_name = 'pages/vacancy-edit.html'
+
+    def get_success_url(self):
+        return reverse('vacancy_edit', kwargs={'pk': self.object.pk})
+
+
+class MyVacancyEditView(BaseVacancyView, UpdateView):
+    template_name = 'pages/vacancy-edit.html'
+
+    def get_success_url(self):
+        return reverse('vacancy_edit', kwargs={'pk': self.object.pk})
 
 
 class MainView(View):
