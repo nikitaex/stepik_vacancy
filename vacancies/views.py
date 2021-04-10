@@ -1,12 +1,12 @@
 from django.contrib.auth.models import User
 from django.contrib.auth.views import LoginView, LogoutView
 from django.http import HttpResponseServerError, Http404
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse
 from django.views import View
 
-from vacancies.forms import CompanyForm, VacancyForm
-from vacancies.models import Vacancy, Specialty, Company
+from vacancies.forms import CompanyForm, VacancyForm, ApplicationForm
+from vacancies.models import Vacancy, Specialty, Company, Application
 from django.db.models import Count
 from django.contrib.auth.forms import UserCreationForm
 from django.views.generic import CreateView, UpdateView, ListView
@@ -14,7 +14,7 @@ from django.views.generic import CreateView, UpdateView, ListView
 
 class MySignupView(CreateView):
     form_class = UserCreationForm
-    success_url = 'login'
+    success_url = '/login'
     template_name = 'pages/register.html'
 
 
@@ -50,6 +50,11 @@ class MyCompanyCreateOfferView(View):
 
 class MyCompanyCreateView(BaseCompanyView, CreateView):
     template_name = 'pages/company-edit.html'
+
+    def dispatch(self, request, *args, **kwargs):
+        if request.user.company is None:
+            return redirect('company_create_offer')
+        return super().dispatch(request, *args, **kwargs)
 
 
 class MyCompanyEditView(BaseCompanyView, UpdateView):
@@ -129,12 +134,14 @@ class CompanyCardView(View):
 
 class VacancyView(View):
     def get(self, request, vacancy_id):
+        form = ApplicationForm()
         try:
             vacancy = Company.objects.get(id=vacancy_id)
         except KeyError:
             raise Http404
         return render(request, 'pages/vacancy.html', context={
                 'vacancy': Vacancy.objects.get(id=vacancy.id),
+                'form': form,
             },
         )
 

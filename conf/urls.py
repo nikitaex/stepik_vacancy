@@ -32,7 +32,7 @@ urlpatterns = [
     path('companies/<int:company_id>', CompanyCardView.as_view()),
     path('vacancies/<int:vacancy_id>', VacancyView.as_view()),
     path('login/', MyLoginView.as_view(), name="login"),
-    path('logout/', MyLogoutView.as_view()),
+    path('logout/', MyLogoutView.as_view(), name="logout"),
     path('register/', MySignupView.as_view(), name="register"),
     path('vacancies/<int:vacancy_id>/send', SendVacancyView.as_view(), name="send"),
     path('mycompany/letsstart', MyCompanyCreateOfferView.as_view(), name="company_create_offer"),

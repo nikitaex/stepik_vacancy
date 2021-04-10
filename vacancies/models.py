@@ -9,7 +9,7 @@ class Company(models.Model):
     description = models.CharField(max_length=200)
     employee_count = models.IntegerField()
     owner = models.OneToOneField(get_user_model(), null=True, on_delete=models.CASCADE,
-                                 related_name="companies")
+                                 related_name="company")
 
     def __str__(self):
         return f'{self.name}{self.location}'
@@ -40,7 +40,7 @@ class Vacancy(models.Model):
 
 class Application(models.Model):
     written_username = models.CharField(max_length=30)
-    written_phone = models.Phonenumberfield()
+    written_phone = models.CharField(max_length=13)
     written_cover_letter = models.TextField()
     vacancy = models.ForeignKey(Vacancy, on_delete=models.CASCADE, related_name="applications")
     user = models.ForeignKey(get_user_model(), default="", on_delete=models.CASCADE, related_name="applications")
