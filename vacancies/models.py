@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth import get_user_model
+from django.urls import reverse
 
 
 class Company(models.Model):
@@ -13,6 +14,9 @@ class Company(models.Model):
 
     def __str__(self):
         return f'{self.name}{self.location}'
+
+    def get_absolute_url(self):
+        return '/mycompany'
 
 
 class Specialty(models.Model):

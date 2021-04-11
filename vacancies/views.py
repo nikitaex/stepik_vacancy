@@ -51,22 +51,34 @@ class MyCompanyCreateOfferView(View):
 class MyCompanyCreateView(BaseCompanyView, CreateView):
     template_name = 'pages/company-edit.html'
 
-    def dispatch(self, request, *args, **kwargs):
-        if request.user.company is None:
-            return redirect('company_create_offer')
-        return super().dispatch(request, *args, **kwargs)
+    def get_object(self, queryset=None):
+        return get_object_or_404(User, id=self.request.user.id)
+
+    def form_valid(self, form):
+        form.instance.owner = self.request.user
+        return super().form_valid(form)
 
 
 class MyCompanyEditView(BaseCompanyView, UpdateView):
     template_name = 'pages/company-edit.html'
 
+    def dispatch(self, request, *args, **kwargs):
+        try:
+            company = request.user.company
+            return super().dispatch(request, *args, **kwargs)
+        except Company.DoesNotExist:
+            return redirect('company_create_offer')
+
     def get_object(self, queryset=None):
-        return get_object_or_404(User, id=self.request.user.id)
+        return get_object_or_404(Company, owner=self.request.user.id)
 
 
 class MyVacanciesList(BaseVacancyView, ListView):
     context_object_name = 'vacancies'
     template_name = 'pages/vacancy-list.html'
+
+    def get_queryset(self):
+        return Vacancy.objects.filter(company=self.request.user.company)
 
 
 class MyVacancyCreateView(BaseVacancyView, CreateView):
