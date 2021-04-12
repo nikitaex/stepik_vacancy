@@ -26,18 +26,23 @@ handler500 = custom_handler500
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', MainView.as_view()),
-    path('vacancies/', VacanciesView.as_view()),
-    path('vacancies/cat/<str:specialization>/', SpecializationByVacanciesView.as_view()),
-    path('companies/<int:company_id>', CompanyCardView.as_view()),
-    path('vacancies/<int:vacancy_id>', VacancyView.as_view()),
+
+    path('', MainView.as_view(), name="main"),
+    path('vacancies/', VacanciesView.as_view(), name="vacancies"),
+    path('vacancies/cat/<str:specialization>/', SpecializationByVacanciesView.as_view(), name="vacancies_by_spec"),
+    path('companies/<int:company_id>', CompanyCardView.as_view(), name="company"),
+    path('vacancies/<int:vacancy_id>', VacancyView.as_view(), name="vacancy"),
+
     path('login/', MyLoginView.as_view(), name="login"),
     path('logout/', MyLogoutView.as_view(), name="logout"),
     path('register/', MySignupView.as_view(), name="register"),
+
     path('vacancies/<int:vacancy_id>/send', SendVacancyView.as_view(), name="send"),
+
     path('mycompany/letsstart', MyCompanyCreateOfferView.as_view(), name="company_create_offer"),
     path('mycompany/create', MyCompanyCreateView.as_view(), name="company_create"),
     path('mycompany/', MyCompanyEditView.as_view(), name="company_edit"),
+
     path('mycompany/vacancies', MyVacanciesList.as_view(), name="vacancies_list"),
     path('mycompany/vacancies/create/', MyVacancyCreateView.as_view(), name="vacancy_create"),
     path('mycompany/vacancies/<int:pk>', MyVacancyEditView.as_view(), name="vacancy_edit"),
