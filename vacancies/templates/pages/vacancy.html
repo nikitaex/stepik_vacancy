@@ -1,5 +1,7 @@
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
 {% extends 'pages/base.html' %}
 {% load to_and %}
+{% load crispy_forms_tags %}
 {% load ru_pluralize %}
 {% block title %}<title>Вакансия | Джуманджи</title>{% endblock %}
 {% block container %}
@@ -22,12 +24,12 @@
           <div style="line-height: 1.8;">
             {{ vacancy.description|safe }}
           </div>
-          <form action="/echo" class="card mt-4 mb-3" enctype="multipart/form-data" method="post">
+          <form class="card mt-4 mb-3" enctype="multipart/form-data" method="post">
             <div class="card-body mx-3">
               <p class="h5 mt-3 font-weight-normal">Отозваться на вакансию</p>
                 {% csrf_token %}
-                {{ form.as_p }}
-              <input type="submit" class="btn btn-primary mt-4 mb-2" value="Записаться на пробный урок">
+                {{ form|crispy }}
+                <input type="submit" class="btn btn-primary mt-4 mb-2" value="Записаться на пробный урок">
             </div>
           </form>
         </section>

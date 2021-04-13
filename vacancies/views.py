@@ -145,7 +145,8 @@ class CompanyCardView(View):
 
 
 class VacancyView(View):
-    def get(self, request, vacancy_id):
+
+    def post(self, request, vacancy_id):
         form = ApplicationForm()
         try:
             vacancy = Company.objects.get(id=vacancy_id)
